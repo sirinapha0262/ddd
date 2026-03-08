@@ -1,0 +1,1306 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ตรรกศาสตร์ - Logic Master</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0e1a;
+  --card: #111827;
+  --card2: #1a2236;
+  --accent: #00d4ff;
+  --accent2: #7c3aed;
+  --accent3: #10b981;
+  --accent4: #f59e0b;
+  --danger: #ef4444;
+  --text: #e2e8f0;
+  --muted: #64748b;
+  --border: #1e293b;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Sarabun',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; overflow-x:hidden; }
+
+/* NAV */
+nav { display:flex; align-items:center; justify-content:space-between; padding:16px 32px; background:#0d1424; border-bottom:1px solid var(--border); position:sticky; top:0; z-index:100; }
+.logo { font-size:1.4rem; font-weight:800; background:linear-gradient(90deg,var(--accent),var(--accent2)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.nav-tabs { display:flex; gap:8px; flex-wrap:wrap; }
+.nav-tab { padding:8px 16px; border-radius:8px; border:none; cursor:pointer; font-family:'Sarabun',sans-serif; font-size:0.85rem; font-weight:600; transition:.2s; background:transparent; color:var(--muted); }
+.nav-tab:hover { background:var(--card2); color:var(--text); }
+.nav-tab.active { background:linear-gradient(135deg,var(--accent2),var(--accent)); color:#fff; }
+
+/* PAGES */
+.page { display:none; padding:32px; max-width:1100px; margin:0 auto; }
+.page.active { display:block; animation:fadeIn .3s; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+
+/* HERO */
+.hero { text-align:center; padding:60px 20px; }
+.hero h1 { font-size:3rem; font-weight:800; margin-bottom:16px; background:linear-gradient(135deg,var(--accent),var(--accent2),var(--accent3)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.hero p { color:var(--muted); font-size:1.1rem; margin-bottom:40px; }
+.topic-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:16px; margin-top:32px; }
+.topic-card { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:24px; cursor:pointer; transition:.3s; text-align:left; }
+.topic-card:hover { border-color:var(--accent); transform:translateY(-4px); box-shadow:0 0 30px rgba(0,212,255,.15); }
+.topic-card .icon { font-size:2rem; margin-bottom:12px; }
+.topic-card h3 { font-size:1rem; font-weight:700; margin-bottom:6px; }
+.topic-card p { font-size:0.8rem; color:var(--muted); }
+.badge { display:inline-block; padding:3px 10px; border-radius:20px; font-size:0.7rem; font-weight:700; margin-top:8px; }
+.badge-blue { background:rgba(0,212,255,.15); color:var(--accent); }
+.badge-purple { background:rgba(124,58,237,.2); color:#a78bfa; }
+.badge-green { background:rgba(16,185,129,.15); color:var(--accent3); }
+
+/* CARDS */
+.card { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:24px; margin-bottom:20px; }
+.card h2 { font-size:1.3rem; font-weight:700; margin-bottom:16px; display:flex; align-items:center; gap:10px; }
+.section-title { font-size:1.6rem; font-weight:800; margin-bottom:24px; }
+
+/* TRUTH TABLE */
+table { width:100%; border-collapse:collapse; font-family:'Space Mono',monospace; font-size:0.85rem; }
+th { background:var(--card2); padding:12px 16px; text-align:center; color:var(--accent); font-weight:700; border:1px solid var(--border); }
+td { padding:10px 16px; text-align:center; border:1px solid var(--border); }
+tr:nth-child(even) td { background:rgba(255,255,255,.02); }
+.true-val { color:var(--accent3); font-weight:700; }
+.false-val { color:var(--danger); font-weight:700; }
+.highlight-col { background:rgba(0,212,255,.08) !important; }
+
+/* CODE BLOCK */
+.code-block { background:#0d1117; border:1px solid #30363d; border-radius:12px; padding:20px; font-family:'Space Mono',monospace; font-size:0.82rem; line-height:1.7; overflow-x:auto; position:relative; margin:16px 0; }
+.code-block .line-num { color:#484f58; user-select:none; margin-right:16px; }
+.kw { color:#ff7b72; }
+.fn { color:#d2a8ff; }
+.str { color:#a5d6ff; }
+.num { color:#79c0ff; }
+.cm { color:#8b949e; font-style:italic; }
+.op { color:#ff7b72; }
+.copy-btn { position:absolute; top:12px; right:12px; background:var(--card2); border:1px solid var(--border); color:var(--muted); padding:6px 12px; border-radius:8px; cursor:pointer; font-size:0.75rem; transition:.2s; }
+.copy-btn:hover { color:var(--accent); border-color:var(--accent); }
+
+/* EXPLAIN BOX */
+.explain { background:var(--card2); border-left:3px solid var(--accent2); border-radius:8px; padding:16px; margin:12px 0; font-size:0.9rem; line-height:1.7; }
+.explain-title { font-weight:700; color:var(--accent2); margin-bottom:8px; display:flex; align-items:center; gap:8px; }
+.bug-box { background:rgba(239,68,68,.1); border-left:3px solid var(--danger); border-radius:8px; padding:16px; margin:12px 0; }
+.bug-title { color:var(--danger); font-weight:700; margin-bottom:8px; }
+.fix-box { background:rgba(16,185,129,.1); border-left:3px solid var(--accent3); border-radius:8px; padding:16px; margin:12px 0; }
+.fix-title { color:var(--accent3); font-weight:700; margin-bottom:8px; }
+
+/* QUIZ */
+.quiz-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; }
+.score-display { background:var(--card2); padding:10px 20px; border-radius:12px; font-weight:700; font-size:1.1rem; color:var(--accent); }
+.progress-bar { height:6px; background:var(--border); border-radius:3px; margin-bottom:24px; }
+.progress-fill { height:100%; border-radius:3px; background:linear-gradient(90deg,var(--accent2),var(--accent)); transition:.4s; }
+.quiz-question { font-size:1.1rem; font-weight:600; margin-bottom:20px; line-height:1.6; }
+.quiz-options { display:grid; gap:10px; }
+.quiz-option { background:var(--card2); border:2px solid var(--border); border-radius:12px; padding:14px 20px; cursor:pointer; transition:.2s; text-align:left; font-family:'Sarabun',sans-serif; font-size:0.95rem; color:var(--text); }
+.quiz-option:hover { border-color:var(--accent2); background:rgba(124,58,237,.1); }
+.quiz-option.correct { border-color:var(--accent3); background:rgba(16,185,129,.15); color:var(--accent3); }
+.quiz-option.wrong { border-color:var(--danger); background:rgba(239,68,68,.1); color:var(--danger); }
+.quiz-option:disabled { cursor:not-allowed; }
+.quiz-feedback { margin-top:16px; padding:16px; border-radius:12px; font-size:0.9rem; line-height:1.6; display:none; }
+.feedback-correct { background:rgba(16,185,129,.15); border:1px solid var(--accent3); color:var(--accent3); }
+.feedback-wrong { background:rgba(239,68,68,.1); border:1px solid var(--danger); color:#fca5a5; }
+.btn { padding:12px 24px; border-radius:12px; border:none; cursor:pointer; font-family:'Sarabun',sans-serif; font-weight:700; font-size:0.95rem; transition:.2s; }
+.btn-primary { background:linear-gradient(135deg,var(--accent2),var(--accent)); color:#fff; }
+.btn-primary:hover { opacity:.9; transform:translateY(-1px); }
+.btn-outline { background:transparent; border:2px solid var(--accent2); color:var(--accent2); }
+.btn-outline:hover { background:rgba(124,58,237,.1); }
+
+/* GAME - ASM */
+.asm-machine { display:flex; flex-direction:column; align-items:center; gap:24px; padding:20px; }
+.asm-state { width:120px; height:120px; border-radius:50%; display:flex; flex-direction:column; align-items:center; justify-content:center; border:3px solid var(--muted); background:var(--card2); font-weight:700; transition:.4s; cursor:pointer; }
+.asm-state.active { border-color:var(--accent); background:rgba(0,212,255,.15); box-shadow:0 0 30px rgba(0,212,255,.3); }
+.asm-state.done { border-color:var(--accent3); background:rgba(16,185,129,.15); }
+.asm-states-row { display:flex; align-items:center; gap:20px; flex-wrap:wrap; justify-content:center; }
+.asm-arrow { display:flex; flex-direction:column; align-items:center; }
+.asm-arrow-line { width:60px; height:2px; background:var(--muted); position:relative; }
+.asm-arrow-line::after { content:'▶'; position:absolute; right:-8px; top:-9px; color:var(--muted); font-size:12px; }
+.asm-label { font-size:0.7rem; color:var(--accent4); font-family:'Space Mono',monospace; margin-top:4px; }
+.coin-btn { padding:10px 20px; border-radius:10px; border:none; cursor:pointer; font-weight:700; font-size:0.9rem; font-family:'Sarabun',sans-serif; }
+.coin-10 { background:rgba(245,158,11,.2); color:var(--accent4); border:2px solid var(--accent4); }
+.coin-10:hover { background:rgba(245,158,11,.35); }
+.status-box { background:var(--card2); border-radius:12px; padding:16px 24px; text-align:center; min-width:200px; }
+.status-box .label { font-size:0.8rem; color:var(--muted); margin-bottom:4px; }
+.status-box .val { font-size:1.3rem; font-weight:800; color:var(--accent); font-family:'Space Mono',monospace; }
+.controls-row { display:flex; gap:12px; flex-wrap:wrap; justify-content:center; }
+
+/* GAME TRUTH */
+.truth-game-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px; }
+.var-toggle { background:var(--card2); border:2px solid var(--border); border-radius:12px; padding:16px; text-align:center; cursor:pointer; font-size:1.1rem; font-weight:700; transition:.3s; }
+.var-toggle.true-state { border-color:var(--accent3); background:rgba(16,185,129,.2); color:var(--accent3); }
+.var-toggle.false-state { border-color:var(--danger); background:rgba(239,68,68,.1); color:var(--danger); }
+.formula-display { background:var(--card2); border-radius:12px; padding:20px; text-align:center; font-family:'Space Mono',monospace; font-size:1.1rem; margin-bottom:16px; }
+.result-big { font-size:2rem; font-weight:800; }
+
+/* TABS inside page */
+.inner-tabs { display:flex; gap:8px; margin-bottom:24px; flex-wrap:wrap; }
+.inner-tab { padding:8px 18px; border-radius:8px; border:2px solid var(--border); cursor:pointer; font-family:'Sarabun',sans-serif; font-size:0.85rem; font-weight:600; background:transparent; color:var(--muted); transition:.2s; }
+.inner-tab.active { border-color:var(--accent); color:var(--accent); background:rgba(0,212,255,.08); }
+.inner-content { display:none; }
+.inner-content.active { display:block; animation:fadeIn .25s; }
+
+/* SCORE END */
+.score-end { text-align:center; padding:40px; }
+.score-big { font-size:4rem; font-weight:800; background:linear-gradient(135deg,var(--accent),var(--accent3)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.stars { font-size:2.5rem; margin:16px 0; }
+
+/* LOGICAL EQUIV */
+.equiv-step { display:flex; align-items:center; gap:16px; padding:12px 0; border-bottom:1px solid var(--border); font-family:'Space Mono',monospace; font-size:0.85rem; flex-wrap:wrap; }
+.equiv-step:last-child { border-bottom:none; }
+.equiv-formula { flex:1; min-width:200px; }
+.equiv-rule { background:rgba(124,58,237,.15); color:#a78bfa; padding:4px 10px; border-radius:6px; font-size:0.75rem; white-space:nowrap; }
+
+/* RESPONSIVE */
+@media(max-width:600px) {
+  nav { padding:12px 16px; }
+  .page { padding:16px; }
+  .hero h1 { font-size:2rem; }
+  .truth-game-grid { grid-template-columns:1fr; }
+}
+
+.chip { display:inline-flex; align-items:center; gap:6px; background:var(--card2); border:1px solid var(--border); border-radius:20px; padding:4px 12px; font-size:0.8rem; color:var(--muted); }
+.chip-dot { width:8px; height:8px; border-radius:50%; }
+.tag-list { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px; }
+
+.note { background:rgba(245,158,11,.08); border:1px solid rgba(245,158,11,.3); border-radius:10px; padding:14px; font-size:0.85rem; line-height:1.6; color:#fcd34d; margin:12px 0; }
+.note::before { content:'💡 '; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">⚡ Logic Master</div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showPage('home')">🏠 หน้าแรก</button>
+    <button class="nav-tab" onclick="showPage('asm')">🤖 ASM</button>
+    <button class="nav-tab" onclick="showPage('truth')">📊 Truth Table</button>
+    <button class="nav-tab" onclick="showPage('equiv')">🔄 สมมูล</button>
+    <button class="nav-tab" onclick="showPage('code')">💻 โค้ด</button>
+    <button class="nav-tab" onclick="showPage('quiz')">🎯 ข้อสอบ</button>
+    <button class="nav-tab" onclick="showPage('game')">🎮 เกม</button>
+  </div>
+</nav>
+
+<!-- HOME -->
+<div class="page active" id="page-home">
+  <div class="hero">
+    <h1>ตรรกศาสตร์ 🧠</h1>
+    <p>เรียนรู้ตรรกศาสตร์แบบสนุก ผ่านเกม ข้อสอบ และตัวอย่างโค้ด Python</p>
+    <div class="tag-list" style="justify-content:center">
+      <span class="chip"><span class="chip-dot" style="background:var(--accent)"></span>ครอบคลุมทุกข้อ</span>
+      <span class="chip"><span class="chip-dot" style="background:var(--accent3)"></span>มีเกมการเรียนรู้</span>
+      <span class="chip"><span class="chip-dot" style="background:var(--accent2)"></span>ข้อสอบพร้อมเฉลย</span>
+    </div>
+  </div>
+  <div class="topic-grid">
+    <div class="topic-card" onclick="showPage('asm')">
+      <div class="icon">🤖</div>
+      <h3>ASM Chart – ตู้ซักผ้า</h3>
+      <p>Algorithmic State Machine สำหรับควบคุมเครื่องซักผ้าหยอดเหรียญ</p>
+      <span class="badge badge-blue">ข้อ 1</span>
+    </div>
+    <div class="topic-card" onclick="showPage('truth')">
+      <div class="icon">📊</div>
+      <h3>Truth Table</h3>
+      <p>ตารางความจริงของ [(p∨q)∧¬p]→q และการตรวจสอบสัจนิรันดร์</p>
+      <span class="badge badge-purple">ข้อ 2</span>
+    </div>
+    <div class="topic-card" onclick="showPage('equiv')">
+      <div class="icon">🔄</div>
+      <h3>กฎสมมูล</h3>
+      <p>พิสูจน์ ¬(p→q) ≡ p∧¬q และตรวจสอบอาร์กิวเมนต์</p>
+      <span class="badge badge-green">ข้อ 3-4</span>
+    </div>
+    <div class="topic-card" onclick="showPage('code')">
+      <div class="icon">💻</div>
+      <h3>โค้ด Python</h3>
+      <p>อธิบายและแก้ไขโปรแกรม Truth Table, Tautology, Prime Logic</p>
+      <span class="badge badge-blue">ข้อ 5-7</span>
+    </div>
+    <div class="topic-card" onclick="showPage('quiz')">
+      <div class="icon">🎯</div>
+      <h3>ข้อสอบ + เฉลย</h3>
+      <p>ข้อสอบแบบกาและข้อเขียนพร้อมคำอธิบายละเอียด</p>
+      <span class="badge badge-purple">ครบทุกข้อ</span>
+    </div>
+    <div class="topic-card" onclick="showPage('game')">
+      <div class="icon">🎮</div>
+      <h3>เกมตรรกศาสตร์</h3>
+      <p>เกมทดสอบความเข้าใจแบบสนุก ฝึกสมองให้คิดเป็นตรรกะ</p>
+      <span class="badge badge-green">สนุก!</span>
+    </div>
+  </div>
+</div>
+
+<!-- ASM PAGE -->
+<div class="page" id="page-asm">
+  <div class="section-title">🤖 ข้อ 1: ASM Chart – เครื่องซักผ้าหยอดเหรียญ</div>
+  <div class="inner-tabs">
+    <button class="inner-tab active" onclick="showInner('asm','theory')">📖 ทฤษฎี</button>
+    <button class="inner-tab" onclick="showInner('asm','chart')">📊 ASM Chart</button>
+    <button class="inner-tab" onclick="showInner('asm','sim')">🎮 จำลอง</button>
+  </div>
+
+  <div class="inner-content active" id="asm-theory">
+    <div class="card">
+      <h2>📖 ASM Chart คืออะไร?</h2>
+      <p style="line-height:1.8;color:var(--muted)">ASM (Algorithmic State Machine) Chart คือ แผนภาพที่แสดงการทำงานของระบบดิจิทัลแบบ Sequential โดยมีองค์ประกอบหลัก 3 ส่วน:</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-top:16px;">
+        <div class="explain" style="border-left-color:var(--accent)">
+          <div class="explain-title">⬜ State Box</div>
+          รูปสี่เหลี่ยม = สถานะปัจจุบัน เช่น IDLE, WASHING
+        </div>
+        <div class="explain" style="border-left-color:var(--accent4)">
+          <div class="explain-title">◇ Decision Box</div>
+          รูปเพชร = เงื่อนไข เช่น Coin_10 = 1?
+        </div>
+        <div class="explain" style="border-left-color:var(--accent3)">
+          <div class="explain-title">⬭ Output Box</div>
+          รูปวงรี = ผลลัพธ์ เช่น Wash=1, Dry=1
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>🧺 โจทย์: เครื่องซักผ้าหยอดเหรียญ</h2>
+      <div class="explain">
+        <div class="explain-title">📋 เงื่อนไขของระบบ</div>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:10px;margin-top:8px;">
+          <li>1️⃣ <strong>Input: Coin_10</strong> — รับเหรียญ 10 บาท จนครบ 40 บาท</li>
+          <li>2️⃣ <strong>Output: Wash</strong> — เริ่มซัก 1 รอบ หลังครบ 40 บาท</li>
+          <li>3️⃣ <strong>Input: Timer_Done</strong> — สัญญาณหลังซักเสร็จ → ทำการปั่นแห้ง</li>
+          <li>4️⃣ <strong>Output: Dry</strong> — ปั่นแห้ง จนเสร็จสิ้น</li>
+          <li>5️⃣ กลับสู่สถานะรอรับเหรียญ</li>
+        </ul>
+      </div>
+      <div class="note">สถานะทั้งหมด: S0 (IDLE) → S1 (10฿) → S2 (20฿) → S3 (30฿) → S4 (WASH) → S5 (DRY) → S0</div>
+    </div>
+  </div>
+
+  <div class="inner-content" id="asm-chart">
+    <div class="card">
+      <h2>📊 ASM Diagram – เครื่องซักผ้า</h2>
+      <div style="overflow-x:auto">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:0;padding:20px;font-family:'Space Mono',monospace;font-size:0.8rem;min-width:600px;">
+        <!-- States row -->
+        <div style="display:flex;align-items:center;gap:0;flex-wrap:wrap;justify-content:center;">
+          <div style="display:flex;flex-direction:column;align-items:center;">
+            <div style="background:var(--card2);border:2px solid var(--accent);border-radius:8px;padding:14px 20px;text-align:center;min-width:110px;">
+              <div style="color:var(--accent);font-weight:700">S0</div>
+              <div style="color:var(--muted);font-size:0.7rem">IDLE</div>
+            </div>
+            <div style="width:2px;height:20px;background:var(--muted)"></div>
+            <div style="background:rgba(245,158,11,.1);border:2px dashed var(--accent4);border-radius:6px;padding:10px 14px;font-size:0.75rem;text-align:center;">
+              Coin_10=1?<br><span style="color:var(--accent4)">เหรียญ 10฿?</span>
+            </div>
+            <div style="display:flex;gap:40px;align-items:flex-start;margin-top:8px;">
+              <div style="display:flex;flex-direction:column;align-items:center;">
+                <span style="color:var(--accent3);font-size:0.7rem">YES ▼</span>
+                <div style="width:2px;height:16px;background:var(--accent3)"></div>
+                <div style="background:var(--card2);border:2px solid var(--accent3);border-radius:8px;padding:12px 18px;text-align:center;min-width:100px;">
+                  <div style="color:var(--accent3);font-weight:700">S1</div>
+                  <div style="font-size:0.7rem">10฿</div>
+                </div>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:center;">
+                <span style="color:var(--danger);font-size:0.7rem">NO ↻</span>
+                <div style="width:2px;height:16px;background:var(--danger)"></div>
+                <span style="color:var(--danger);font-size:0.7rem">S0</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="width:2px;height:20px;background:var(--muted);margin-top:8px"></div>
+
+        <!-- S2, S3 -->
+        <div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap;justify-content:center;">
+          <div style="text-align:center">
+            <div style="background:var(--card2);border:2px solid var(--accent2);border-radius:8px;padding:12px 18px;min-width:100px;">
+              <div style="color:#a78bfa;font-weight:700">S2</div>
+              <div style="font-size:0.7rem">20฿</div>
+            </div>
+          </div>
+          <div style="color:var(--muted)">→</div>
+          <div style="text-align:center">
+            <div style="background:var(--card2);border:2px solid var(--accent2);border-radius:8px;padding:12px 18px;min-width:100px;">
+              <div style="color:#a78bfa;font-weight:700">S3</div>
+              <div style="font-size:0.7rem">30฿ (ครบ 40 บาท)</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="width:2px;height:20px;background:var(--muted)"></div>
+
+        <!-- S4 WASH -->
+        <div style="text-align:center">
+          <div style="background:rgba(0,212,255,.1);border:2px solid var(--accent);border-radius:8px;padding:14px 24px;min-width:160px;">
+            <div style="color:var(--accent);font-weight:700;font-size:1rem">S4 – WASH</div>
+            <div style="font-size:0.75rem;margin-top:4px">Output: <span style="color:var(--accent3)">Wash = 1</span></div>
+            <div style="font-size:0.7rem;color:var(--muted)">รอ Timer_Done</div>
+          </div>
+        </div>
+
+        <div style="width:2px;height:20px;background:var(--muted)"></div>
+
+        <!-- S5 DRY -->
+        <div style="text-align:center">
+          <div style="background:rgba(16,185,129,.1);border:2px solid var(--accent3);border-radius:8px;padding:14px 24px;min-width:160px;">
+            <div style="color:var(--accent3);font-weight:700;font-size:1rem">S5 – DRY</div>
+            <div style="font-size:0.75rem;margin-top:4px">Output: <span style="color:var(--accent4)">Dry = 1</span></div>
+            <div style="font-size:0.7rem;color:var(--muted)">หลัง Timer_Done</div>
+          </div>
+        </div>
+
+        <div style="width:2px;height:20px;background:var(--muted)"></div>
+        <div style="color:var(--accent4);font-size:0.75rem">↩ กลับ S0 (IDLE)</div>
+      </div>
+      </div>
+
+      <div class="note">เหรียญ 10฿ × 4 ครั้ง = 40฿ → เริ่มซัก → Timer_Done → ปั่นแห้ง → กลับสู่ IDLE</div>
+    </div>
+
+    <div class="card">
+      <h2>📋 ตาราง State Transition</h2>
+      <table>
+        <tr><th>State</th><th>ชื่อ</th><th>Input</th><th>Next State</th><th>Output</th></tr>
+        <tr><td class="true-val">S0</td><td>IDLE</td><td>Coin_10=1</td><td>S1</td><td>-</td></tr>
+        <tr><td class="true-val">S1</td><td>10฿</td><td>Coin_10=1</td><td>S2</td><td>-</td></tr>
+        <tr><td class="true-val">S2</td><td>20฿</td><td>Coin_10=1</td><td>S3</td><td>-</td></tr>
+        <tr><td class="true-val">S3</td><td>30฿</td><td>Coin_10=1</td><td>S4</td><td>-</td></tr>
+        <tr><td style="color:var(--accent)">S4</td><td>WASH</td><td>Timer_Done=1</td><td>S5</td><td><span class="true-val">Wash=1</span></td></tr>
+        <tr><td style="color:var(--accent4)">S5</td><td>DRY</td><td>(auto)</td><td>S0</td><td><span style="color:var(--accent4)">Dry=1</span></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="inner-content" id="asm-sim">
+    <div class="card">
+      <h2>🎮 จำลองการทำงาน – หยอดเหรียญ!</h2>
+      <div class="asm-machine">
+        <div style="display:flex;gap:16px;flex-wrap:wrap;justify-content:center;" id="asm-states-display">
+          <!-- rendered by JS -->
+        </div>
+        <div class="controls-row">
+          <button class="coin-btn coin-10" onclick="insertCoin()">🪙 หยอดเหรียญ 10฿</button>
+          <button class="btn btn-outline" onclick="resetASM()">🔄 รีเซ็ต</button>
+        </div>
+        <div id="asm-status" style="background:var(--card2);border-radius:12px;padding:16px 24px;text-align:center;width:100%;max-width:400px;">
+          <div style="font-size:0.85rem;color:var(--muted)">สถานะ</div>
+          <div id="asm-status-text" style="font-size:1.2rem;font-weight:700;color:var(--accent);margin-top:4px;">⏳ รอรับเหรียญ... กด 🪙</div>
+        </div>
+        <div id="asm-log" style="width:100%;max-width:500px;background:var(--card2);border-radius:10px;padding:14px;font-family:'Space Mono',monospace;font-size:0.78rem;color:var(--muted);max-height:160px;overflow-y:auto;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TRUTH TABLE PAGE -->
+<div class="page" id="page-truth">
+  <div class="section-title">📊 ข้อ 2: ตารางความจริง</div>
+  <div class="inner-tabs">
+    <button class="inner-tab active" onclick="showInner('truth','table')">📊 ตาราง</button>
+    <button class="inner-tab" onclick="showInner('truth','interactive')">🎮 ลองเล่น</button>
+    <button class="inner-tab" onclick="showInner('truth','tautology')">✅ สัจนิรันดร์</button>
+  </div>
+
+  <div class="inner-content active" id="truth-table">
+    <div class="card">
+      <h2>📐 สูตร: [(p ∨ q) ∧ ¬p] → q</h2>
+      <div class="explain">
+        <div class="explain-title">🔍 วิธีอ่านสูตร</div>
+        <p>ถ้า (p หรือ q เป็นจริง) <strong>และ</strong> (p เป็นเท็จ) แล้ว q ต้องเป็นจริง</p>
+      </div>
+      <div style="overflow-x:auto;margin-top:16px;">
+      <table>
+        <tr>
+          <th>p</th><th>q</th><th>p ∨ q</th><th>¬p</th><th>(p∨q) ∧ ¬p</th><th class="highlight-col">[(p∨q)∧¬p] → q</th>
+        </tr>
+        <tr>
+          <td class="true-val">T</td><td class="true-val">T</td>
+          <td class="true-val">T</td><td class="false-val">F</td><td class="false-val">F</td>
+          <td class="true-val highlight-col">T</td>
+        </tr>
+        <tr>
+          <td class="true-val">T</td><td class="false-val">F</td>
+          <td class="true-val">T</td><td class="false-val">F</td><td class="false-val">F</td>
+          <td class="true-val highlight-col">T</td>
+        </tr>
+        <tr>
+          <td class="false-val">F</td><td class="true-val">T</td>
+          <td class="true-val">T</td><td class="true-val">T</td><td class="true-val">T</td>
+          <td class="true-val highlight-col">T</td>
+        </tr>
+        <tr>
+          <td class="false-val">F</td><td class="false-val">F</td>
+          <td class="false-val">F</td><td class="true-val">T</td><td class="false-val">F</td>
+          <td class="true-val highlight-col">T</td>
+        </tr>
+      </table>
+      </div>
+      <div class="fix-box" style="margin-top:16px">
+        <div class="fix-title">✅ ผลสรุป: เป็นสัจนิรันดร์ (Tautology)!</div>
+        คอลัมน์สุดท้ายเป็น T ทุกแถว → สูตรนี้เป็นจริงเสมอ ไม่ว่า p, q จะเป็นอะไร
+      </div>
+    </div>
+  </div>
+
+  <div class="inner-content" id="truth-interactive">
+    <div class="card">
+      <h2>🎮 ลองกด p และ q เอง!</h2>
+      <div class="truth-game-grid">
+        <div class="var-toggle false-state" id="toggle-p" onclick="toggleVar('p')">
+          <div style="font-size:0.8rem;color:var(--muted);margin-bottom:6px">ตัวแปร p</div>
+          <div id="p-val">False</div>
+        </div>
+        <div class="var-toggle false-state" id="toggle-q" onclick="toggleVar('q')">
+          <div style="font-size:0.8rem;color:var(--muted);margin-bottom:6px">ตัวแปร q</div>
+          <div id="q-val">False</div>
+        </div>
+      </div>
+      <div class="formula-display">
+        <div style="font-size:0.8rem;color:var(--muted);margin-bottom:8px">[(p ∨ q) ∧ ¬p] → q</div>
+        <div id="step-por" style="margin:4px 0;font-size:0.85rem">p ∨ q = <span id="por-val">False</span></div>
+        <div id="step-notp" style="margin:4px 0;font-size:0.85rem">¬p = <span id="notp-val">True</span></div>
+        <div id="step-and" style="margin:4px 0;font-size:0.85rem">(p∨q) ∧ ¬p = <span id="and-val">False</span></div>
+        <div style="border-top:1px solid var(--border);margin-top:12px;padding-top:12px">
+          ผลลัพธ์: <span class="result-big" id="final-val">True</span>
+        </div>
+      </div>
+      <div id="interactive-explain" class="explain"></div>
+    </div>
+  </div>
+
+  <div class="inner-content" id="truth-tautology">
+    <div class="card">
+      <h2>❓ สัจนิรันดร์ (Tautology) คืออะไร?</h2>
+      <div class="explain">
+        <div class="explain-title">📖 นิยาม</div>
+        สูตรที่เป็น <strong>จริงทุกกรณี</strong> ไม่ว่าจะแทนค่าตัวแปรอย่างไร เรียกว่า "สัจนิรันดร์"
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px;">
+        <div class="fix-box">
+          <div class="fix-title">✅ ตัวอย่าง Tautology</div>
+          <ul style="list-style:none;line-height:2;font-family:'Space Mono',monospace;font-size:0.8rem">
+            <li>p ∨ ¬p (เป็นจริงเสมอ)</li>
+            <li>p → p</li>
+            <li>[(p∨q)∧¬p] → q ✓</li>
+          </ul>
+        </div>
+        <div class="bug-box">
+          <div class="bug-title">❌ ไม่ใช่ Tautology</div>
+          <ul style="list-style:none;line-height:2;font-family:'Space Mono',monospace;font-size:0.8rem">
+            <li>p ∧ q (อาจเป็น F)</li>
+            <li>p → q (อาจเป็น F)</li>
+            <li>p ∨ q (เป็น F เมื่อ p=F,q=F)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- EQUIV PAGE -->
+<div class="page" id="page-equiv">
+  <div class="section-title">🔄 ข้อ 3-4: กฎสมมูล & อาร์กิวเมนต์</div>
+  <div class="inner-tabs">
+    <button class="inner-tab active" onclick="showInner('equiv','proof')">📝 พิสูจน์ข้อ 3</button>
+    <button class="inner-tab" onclick="showInner('equiv','arg')">🔍 ตรวจอาร์กิวเมนต์</button>
+    <button class="inner-tab" onclick="showInner('equiv','laws')">📚 กฎทั้งหมด</button>
+  </div>
+
+  <div class="inner-content active" id="equiv-proof">
+    <div class="card">
+      <h2>📝 พิสูจน์: ¬(p → q) ≡ p ∧ ¬q</h2>
+      <div class="explain">
+        <div class="explain-title">🎯 เป้าหมาย</div>
+        ต้องแปลงฝั่งซ้าย ¬(p → q) ให้ได้ p ∧ ¬q โดยใช้กฎสมมูล
+      </div>
+      <div style="margin-top:20px;">
+        <div class="equiv-step">
+          <div class="equiv-formula" style="color:var(--text);font-weight:700">¬(p → q)</div>
+          <div class="equiv-rule">เริ่มต้น</div>
+        </div>
+        <div class="equiv-step">
+          <div class="equiv-formula">≡ ¬(¬p ∨ q)</div>
+          <div class="equiv-rule">Implication Law: p→q ≡ ¬p∨q</div>
+        </div>
+        <div class="equiv-step">
+          <div class="equiv-formula">≡ ¬(¬p) ∧ ¬q</div>
+          <div class="equiv-rule">De Morgan's Law: ¬(A∨B) ≡ ¬A∧¬B</div>
+        </div>
+        <div class="equiv-step">
+          <div class="equiv-formula" style="color:var(--accent3);font-weight:700">≡ p ∧ ¬q</div>
+          <div class="equiv-rule">Double Negation: ¬(¬p) ≡ p ✅</div>
+        </div>
+      </div>
+      <div class="fix-box" style="margin-top:16px">
+        <div class="fix-title">✅ พิสูจน์สำเร็จ!</div>
+        ใช้กฎ 3 ขั้นตอน: Implication → De Morgan → Double Negation
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>📊 ตรวจสอบด้วยตารางความจริง</h2>
+      <div style="overflow-x:auto">
+      <table>
+        <tr><th>p</th><th>q</th><th>p→q</th><th>¬(p→q)</th><th>¬q</th><th class="highlight-col">p∧¬q</th><th>เท่ากัน?</th></tr>
+        <tr><td class="true-val">T</td><td class="true-val">T</td><td class="true-val">T</td><td class="false-val">F</td><td class="false-val">F</td><td class="false-val highlight-col">F</td><td class="true-val">✓</td></tr>
+        <tr><td class="true-val">T</td><td class="false-val">F</td><td class="false-val">F</td><td class="true-val">T</td><td class="true-val">T</td><td class="true-val highlight-col">T</td><td class="true-val">✓</td></tr>
+        <tr><td class="false-val">F</td><td class="true-val">T</td><td class="true-val">T</td><td class="false-val">F</td><td class="false-val">F</td><td class="false-val highlight-col">F</td><td class="true-val">✓</td></tr>
+        <tr><td class="false-val">F</td><td class="false-val">F</td><td class="true-val">T</td><td class="false-val">F</td><td class="true-val">T</td><td class="false-val highlight-col">F</td><td class="true-val">✓</td></tr>
+      </table>
+      </div>
+      <div class="note">คอลัมน์ ¬(p→q) และ p∧¬q เหมือนกันทุกแถว → สมมูลกันจริง ✓</div>
+    </div>
+  </div>
+
+  <div class="inner-content" id="equiv-arg">
+    <div class="card">
+      <h2>🔍 ข้อ 4: ตรวจอาร์กิวเมนต์ p→q, ¬q ⊢ ¬p</h2>
+      <div class="explain">
+        <div class="explain-title">📋 อาร์กิวเมนต์ที่ให้</div>
+        <ul style="list-style:none;line-height:2;font-family:'Space Mono',monospace">
+          <li>สมมติฐาน 1: p → q</li>
+          <li>สมมติฐาน 2: ¬q</li>
+          <li>สรุป: ¬p</li>
+        </ul>
+      </div>
+      <div style="margin-top:16px;">
+        <div class="equiv-step">
+          <div class="equiv-formula">สมมติฐาน: p → q</div>
+          <div class="equiv-rule">กำหนดให้</div>
+        </div>
+        <div class="equiv-step">
+          <div class="equiv-formula">ทราบว่า: ¬q</div>
+          <div class="equiv-rule">กำหนดให้</div>
+        </div>
+        <div class="equiv-step">
+          <div class="equiv-formula" style="color:var(--accent3);font-weight:700">∴ ¬p</div>
+          <div class="equiv-rule">Modus Tollens (กฎอ้างเหตุผลแบบปฏิเสธ)</div>
+        </div>
+      </div>
+      <div class="fix-box" style="margin-top:16px">
+        <div class="fix-title">✅ อาร์กิวเมนต์สมเหตุสมผล!</div>
+        ใช้กฎ <strong>Modus Tollens</strong>: ถ้า p→q และ ¬q แล้ว ¬p เสมอ
+      </div>
+    </div>
+    <div class="card">
+      <h2>📊 ตรวจด้วยตารางความจริง</h2>
+      <div style="overflow-x:auto">
+      <table>
+        <tr><th>p</th><th>q</th><th>p→q</th><th>¬q</th><th>¬p</th><th class="highlight-col">สมมติฐานจริงทั้งคู่?</th><th>สรุปจริงไหม?</th></tr>
+        <tr><td class="true-val">T</td><td class="true-val">T</td><td class="true-val">T</td><td class="false-val">F</td><td class="false-val">F</td><td class="false-val highlight-col">F (¬q เท็จ)</td><td style="color:var(--muted)">ไม่นับ</td></tr>
+        <tr><td class="true-val">T</td><td class="false-val">F</td><td class="false-val">F</td><td class="true-val">T</td><td class="false-val">F</td><td class="false-val highlight-col">F (p→q เท็จ)</td><td style="color:var(--muted)">ไม่นับ</td></tr>
+        <tr><td class="false-val">F</td><td class="true-val">T</td><td class="true-val">T</td><td class="false-val">F</td><td class="true-val">T</td><td class="false-val highlight-col">F (¬q เท็จ)</td><td style="color:var(--muted)">ไม่นับ</td></tr>
+        <tr style="background:rgba(16,185,129,.05)"><td class="false-val">F</td><td class="false-val">F</td><td class="true-val">T</td><td class="true-val">T</td><td class="true-val">T</td><td class="true-val highlight-col">✓ ทั้งคู่จริง</td><td class="true-val">✓ จริง</td></tr>
+      </table>
+      </div>
+      <div class="note">กรณีที่สมมติฐานจริงทั้งคู่ (แถวสุดท้าย) → สรุปเป็นจริงด้วย → สมเหตุสมผล ✓</div>
+    </div>
+  </div>
+
+  <div class="inner-content" id="equiv-laws">
+    <div class="card">
+      <h2>📚 กฎสมมูลที่ต้องจำ</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;">
+        <div class="explain">
+          <div class="explain-title">1️⃣ Implication Law</div>
+          <code>p → q ≡ ¬p ∨ q</code>
+        </div>
+        <div class="explain">
+          <div class="explain-title">2️⃣ De Morgan's Laws</div>
+          <code>¬(p∧q) ≡ ¬p∨¬q<br>¬(p∨q) ≡ ¬p∧¬q</code>
+        </div>
+        <div class="explain">
+          <div class="explain-title">3️⃣ Double Negation</div>
+          <code>¬(¬p) ≡ p</code>
+        </div>
+        <div class="explain">
+          <div class="explain-title">4️⃣ Modus Ponens</div>
+          <code>p→q, p ⊢ q</code>
+        </div>
+        <div class="explain">
+          <div class="explain-title">5️⃣ Modus Tollens</div>
+          <code>p→q, ¬q ⊢ ¬p</code>
+        </div>
+        <div class="explain">
+          <div class="explain-title">6️⃣ Contrapositive</div>
+          <code>p→q ≡ ¬q→¬p</code>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CODE PAGE -->
+<div class="page" id="page-code">
+  <div class="section-title">💻 ข้อ 5-7: โค้ด Python + การแก้ไข</div>
+  <div class="inner-tabs">
+    <button class="inner-tab active" onclick="showInner('code','tt')">📊 Truth Table</button>
+    <button class="inner-tab" onclick="showInner('code','taut')">✅ Tautology</button>
+    <button class="inner-tab" onclick="showInner('code','prime')">🔢 Prime Logic</button>
+  </div>
+
+  <div class="inner-content active" id="code-tt">
+    <div class="card">
+      <h2>📊 ข้อ 5: Truth Table Generator</h2>
+      <div class="bug-box">
+        <div class="bug-title">🐛 โค้ดที่มีบั๊ก (จากโจทย์)</div>
+        <div class="code-block">
+<span class="kw">def</span> <span class="fn">truth_table</span>():
+    <span class="fn">print</span>(<span class="str">"p     | q     | p AND q | p OR q | p -> q"</span>)
+    <span class="fn">print</span>(<span class="str">"-"</span> <span class="op">*</span> <span class="num">45</span>)
+    <span class="kw">for</span> p <span class="kw">in</span> [<span class="kw">True</span>, <span class="kw">False</span>]:
+        <span class="kw">for</span> q <span class="kw">in</span> [<span class="kw">True</span>, <span class="kw">False</span>]:
+            implies = (<span class="kw">not</span> p) <span class="kw">or</span> q
+            <span class="fn">print</span>(f<span class="str">"{str(p):5} | {str(q):5} | {str(p and q):7} | {str(p or q):6}"</span>)
+            <span class="cm"># ❌ บั๊ก: ลืม print implies ในบรรทัดสุดท้าย!</span>
+
+<span class="fn">truth_table</span>()
+        </div>
+      </div>
+
+      <div class="fix-box">
+        <div class="fix-title">✅ โค้ดที่ถูกต้อง</div>
+        <div class="code-block">
+<button class="copy-btn" onclick="copyCode(this)">📋 คัดลอก</button>
+<span class="kw">def</span> <span class="fn">truth_table</span>():
+    <span class="fn">print</span>(<span class="str">"p     | q     | p AND q | p OR q | p -> q"</span>)
+    <span class="fn">print</span>(<span class="str">"-"</span> <span class="op">*</span> <span class="num">45</span>)
+    <span class="kw">for</span> p <span class="kw">in</span> [<span class="kw">True</span>, <span class="kw">False</span>]:
+        <span class="kw">for</span> q <span class="kw">in</span> [<span class="kw">True</span>, <span class="kw">False</span>]:
+            implies = (<span class="kw">not</span> p) <span class="kw">or</span> q  <span class="cm"># p → q</span>
+            <span class="fn">print</span>(f<span class="str">"{str(p):5} | {str(q):5} | {str(p and q):7} | {str(p or q):6} | {str(implies):6}"</span>)
+            <span class="cm"># ✅ แก้ไข: เพิ่ม {str(implies):6} ท้ายบรรทัด</span>
+
+<span class="fn">truth_table</span>()
+        </div>
+      </div>
+
+      <div class="explain">
+        <div class="explain-title">🔍 อธิบายทีละบรรทัด</div>
+        <table style="margin-top:8px">
+          <tr><th>บรรทัด</th><th>ความหมาย</th></tr>
+          <tr><td style="font-family:'Space Mono',monospace;font-size:0.8rem">for p in [True, False]:</td><td>วนลูป p เป็น T และ F</td></tr>
+          <tr><td style="font-family:'Space Mono',monospace;font-size:0.8rem">for q in [True, False]:</td><td>วนลูป q เป็น T และ F (ทุกคู่)</td></tr>
+          <tr><td style="font-family:'Space Mono',monospace;font-size:0.8rem">implies = (not p) or q</td><td>คำนวณ p→q ด้วยสูตร ¬p∨q</td></tr>
+          <tr><td style="font-family:'Space Mono',monospace;font-size:0.8rem">print(f"...")</td><td>แสดงผลทุกค่าในแถวเดียว</td></tr>
+        </table>
+      </div>
+
+      <div class="explain" style="margin-top:12px">
+        <div class="explain-title">📤 ผลลัพธ์ที่ได้</div>
+        <div style="font-family:'Space Mono',monospace;font-size:0.8rem;line-height:1.8;color:var(--accent3)">
+p     | q     | p AND q | p OR q | p -> q<br>
+---------------------------------------------<br>
+True  | True  | True    | True   | True<br>
+True  | False | False   | True   | False<br>
+False | True  | False   | True   | True<br>
+False | False | False   | False  | True
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="inner-content" id="code-taut">
+    <div class="card">
+      <h2>✅ ข้อ 6: Tautology Checker</h2>
+      <div class="bug-box">
+        <div class="bug-title">🐛 โค้ดที่มีบั๊ก</div>
+        <div class="code-block">
+<span class="kw">def</span> <span class="fn">is_tautology</span>():
+    results = []
+    <span class="kw">for</span> p <span class="kw">in</span> [<span class="kw">True</span>, <span class="kw">False</span>]:
+        <span class="kw">for</span> q <span class="kw">in</span> [<span class="kw">True</span>, <span class="kw">False</span>]:
+            lhs = p <span class="kw">and</span> ((<span class="kw">not</span> p) <span class="kw">or</span> q)   <span class="cm"># ❌ lhs = p AND (p→q)</span>
+            expression = (<span class="kw">not</span> lhs) <span class="kw">or</span> q    <span class="cm"># ❌ expression = lhs → q (ผิดสูตร)</span>
+            results.append(expression)
+    <span class="kw">return</span> <span class="fn">all</span>(results)
+
+<span class="fn">print</span>(f<span class="str">"Is it a tautology? {is_tautology()}"</span>)
+        </div>
+      </div>
+      <div class="explain">
+        <div class="explain-title">🐛 ปัญหาที่พบ</div>
+        <p>โค้ดต้องการตรวจสูตร <strong>[(p∨q)∧¬p] → q</strong> แต่โค้ดเดิมคำนวณสูตรผิด</p>
+        <ul style="margin-top:8px;line-height:1.8;list-style:disc;padding-left:20px">
+          <li>lhs ควรเป็น <code>(p or q) and (not p)</code> ไม่ใช่ <code>p and ((not p) or q)</code></li>
+          <li>expression ควรเป็น <code>(not lhs) or q</code> ซึ่งถูกแล้ว แต่ lhs ผิด</li>
+        </ul>
+      </div>
+      <div class="fix-box">
+        <div class="fix-title">✅ โค้ดที่ถูกต้อง</div>
+        <div class="code-block">
+<button class="copy-btn" onclick="copyCode(this)">📋 คัดลอก</button>
+<span class="kw">def</span> <span class="fn">is_tautology</span>():
+    results = []
+    <span class="kw">for</span> p <span class="kw">in</span> [<span class="kw">True</span>, <span class="kw">False</span>]:
+        <span class="kw">for</span> q <span class="kw">in</span> [<span class="kw">True</span>, <span class="kw">False</span>]:
+            lhs = (p <span class="kw">or</span> q) <span class="kw">and</span> (<span class="kw">not</span> p)  <span class="cm"># ✅ (p∨q) ∧ ¬p</span>
+            expression = (<span class="kw">not</span> lhs) <span class="kw">or</span> q   <span class="cm"># ✅ lhs → q</span>
+            results.append(expression)
+    <span class="kw">return</span> <span class="fn">all</span>(results)
+
+<span class="fn">print</span>(f<span class="str">"Is it a tautology? {is_tautology()}"</span>)
+<span class="cm"># Output: Is it a tautology? True</span>
+        </div>
+      </div>
+      <div class="explain">
+        <div class="explain-title">🔍 อธิบาย</div>
+        <p><code>(not lhs) or q</code> คือการคำนวณ lhs→q เพราะ p→q ≡ ¬p∨q</p>
+        <p style="margin-top:8px"><code>all(results)</code> จะคืนค่า True ก็ต่อเมื่อทุกค่าใน list เป็น True = สูตรเป็น Tautology</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="inner-content" id="code-prime">
+    <div class="card">
+      <h2>🔢 ข้อ 7: Basic Proof Logic – Prime Numbers</h2>
+      <div class="explain">
+        <div class="explain-title">🎯 โจทย์ตรรกะที่ทดสอบ</div>
+        <p style="font-family:'Space Mono',monospace">(Prime(n) AND n > 2) → IsOdd(n)</p>
+        <p style="margin-top:8px">"ถ้า n เป็นจำนวนเฉพาะและ n > 2 แล้ว n ต้องเป็นเลขคี่"</p>
+      </div>
+
+      <div class="code-block">
+<button class="copy-btn" onclick="copyCode(this)">📋 คัดลอก</button>
+<span class="kw">def</span> <span class="fn">is_prime</span>(n):
+    <span class="kw">if</span> n <span class="op">&lt;</span> <span class="num">2</span>: <span class="kw">return</span> <span class="kw">False</span>
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">2</span>, <span class="fn">int</span>(n<span class="op">**</span><span class="num">0.5</span>) <span class="op">+</span> <span class="num">1</span>):
+        <span class="kw">if</span> n <span class="op">%</span> i <span class="op">==</span> <span class="num">0</span>: <span class="kw">return</span> <span class="kw">False</span>
+    <span class="kw">return</span> <span class="kw">True</span>
+
+<span class="cm"># ตรวจสอบตรรกะ: (Prime(n) AND n > 2) -> IsOdd(n)</span>
+found_counterexample = <span class="kw">False</span>
+<span class="kw">for</span> n <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1</span>, <span class="num">101</span>):
+    condition = <span class="fn">is_prime</span>(n) <span class="kw">and</span> n <span class="op">&gt;</span> <span class="num">2</span>
+    conclusion = n <span class="op">%</span> <span class="num">2</span> <span class="op">!=</span> <span class="num">0</span>        <span class="cm"># IsOdd(n)</span>
+
+    <span class="cm"># ตรรกะ: NOT condition OR conclusion</span>
+    <span class="kw">if</span> condition <span class="kw">and</span> <span class="kw">not</span> conclusion: <span class="cm"># พบ counterexample!</span>
+        <span class="fn">print</span>(f<span class="str">"Counterexample found: {n}"</span>)
+        found_counterexample = <span class="kw">True</span>
+        <span class="kw">break</span>
+
+<span class="kw">if not</span> found_counterexample:
+    <span class="fn">print</span>(<span class="str">"Logic holds for n=1 to 100"</span>)
+<span class="cm"># Output: Logic holds for n=1 to 100</span>
+      </div>
+
+      <div class="explain">
+        <div class="explain-title">🔍 อธิบายทีละส่วน</div>
+        <table style="margin-top:8px">
+          <tr><th>โค้ด</th><th>ความหมาย</th></tr>
+          <tr><td style="font-family:'Space Mono',monospace;font-size:0.75rem">int(n**0.5)+1</td><td>ตรวจตัวหารแค่ถึง √n (ประหยัดเวลา)</td></tr>
+          <tr><td style="font-family:'Space Mono',monospace;font-size:0.75rem">condition = is_prime(n) and n>2</td><td>สมมติฐาน: n เป็นเฉพาะ และ >2</td></tr>
+          <tr><td style="font-family:'Space Mono',monospace;font-size:0.75rem">conclusion = n%2!=0</td><td>ข้อสรุป: n เป็นเลขคี่</td></tr>
+          <tr><td style="font-family:'Space Mono',monospace;font-size:0.75rem">if condition and not conclusion</td><td>ถ้าสมมติฐานจริงแต่สรุปผิด = counterexample</td></tr>
+        </table>
+      </div>
+      <div class="note">จำนวนเฉพาะที่ >2 ทุกตัวเป็นเลขคี่ (2 เป็นจำนวนเฉพาะคู่เดียว) → Logic holds ✓</div>
+    </div>
+  </div>
+</div>
+
+<!-- QUIZ PAGE -->
+<div class="page" id="page-quiz">
+  <div class="section-title">🎯 ข้อสอบ + เฉลย</div>
+  <div class="inner-tabs">
+    <button class="inner-tab active" onclick="showInner('quiz','mc')">🔘 ปรนัย</button>
+    <button class="inner-tab" onclick="showInner('quiz','write')">✏️ อัตนัย</button>
+  </div>
+
+  <div class="inner-content active" id="quiz-mc">
+    <div class="card">
+      <div class="quiz-header">
+        <div>
+          <div id="quiz-qnum" style="font-size:0.85rem;color:var(--muted)">ข้อ 1 / 12</div>
+        </div>
+        <div class="score-display">คะแนน: <span id="quiz-score">0</span></div>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="quiz-progress" style="width:8%"></div></div>
+      <div class="quiz-question" id="quiz-q"></div>
+      <div class="quiz-options" id="quiz-opts"></div>
+      <div class="quiz-feedback" id="quiz-fb"></div>
+      <div style="margin-top:20px;display:flex;gap:12px;" id="quiz-nav" style="display:none">
+        <button class="btn btn-primary" id="quiz-next-btn" onclick="nextQuestion()" style="display:none">ข้อถัดไป →</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="inner-content" id="quiz-write">
+    <div class="card">
+      <h2>✏️ ข้อสอบอัตนัย – เฉลยละเอียด</h2>
+      <div id="write-questions"></div>
+    </div>
+  </div>
+</div>
+
+<!-- GAME PAGE -->
+<div class="page" id="page-game">
+  <div class="section-title">🎮 เกมตรรกศาสตร์</div>
+  <div class="inner-tabs">
+    <button class="inner-tab active" onclick="showInner('game','logic')">⚡ Logic Race</button>
+    <button class="inner-tab" onclick="showInner('game','match')">🃏 Match Game</button>
+    <button class="inner-tab" onclick="showInner('game','builder')">🔨 Formula Builder</button>
+  </div>
+
+  <div class="inner-content active" id="game-logic">
+    <div class="card">
+      <h2>⚡ Logic Race – ตอบให้ไว!</h2>
+      <div id="logic-race-area">
+        <div style="text-align:center;padding:20px;">
+          <p style="color:var(--muted);margin-bottom:20px">ตอบว่าสูตรตรรกะผลลัพธ์เป็น T หรือ F ให้เร็วที่สุด!</p>
+          <button class="btn btn-primary" onclick="startLogicRace()">🚀 เริ่มเกม</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="inner-content" id="game-match">
+    <div class="card">
+      <h2>🃏 Match – จับคู่กฎสมมูล</h2>
+      <p style="color:var(--muted);margin-bottom:20px;">เลือกสูตรที่สมมูลกัน!</p>
+      <div id="match-game-area"></div>
+    </div>
+  </div>
+
+  <div class="inner-content" id="game-builder">
+    <div class="card">
+      <h2>🔨 Formula Builder – สร้างสูตรตรรกะ</h2>
+      <p style="color:var(--muted);margin-bottom:16px;">กดปุ่มเพื่อสร้างสูตร แล้วดูว่าผลลัพธ์เป็น Tautology หรือไม่</p>
+      <div id="builder-display" style="background:var(--card2);border-radius:12px;padding:20px;margin-bottom:16px;font-family:'Space Mono',monospace;font-size:1.1rem;min-height:60px;text-align:center;color:var(--accent)">
+        คลิกปุ่มด้านล่างเพื่อสร้างสูตร
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;">
+        <button class="btn btn-outline" onclick="addSymbol('p')">p</button>
+        <button class="btn btn-outline" onclick="addSymbol('q')">q</button>
+        <button class="btn btn-outline" onclick="addSymbol(' ∧ ')">∧</button>
+        <button class="btn btn-outline" onclick="addSymbol(' ∨ ')">∨</button>
+        <button class="btn btn-outline" onclick="addSymbol('¬')">¬</button>
+        <button class="btn btn-outline" onclick="addSymbol(' → ')">→</button>
+        <button class="btn btn-outline" onclick="addSymbol('(')"> ( </button>
+        <button class="btn btn-outline" onclick="addSymbol(')')"> ) </button>
+        <button class="btn btn-outline" onclick="clearFormula()" style="border-color:var(--danger);color:var(--danger)">🗑 ลบ</button>
+      </div>
+      <button class="btn btn-primary" onclick="evalFormula()">⚡ ประเมินสูตร</button>
+      <div id="builder-result" style="margin-top:16px;display:none"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============ PAGE & TAB NAVIGATION ============
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  event.currentTarget.classList.add('active');
+}
+
+function showInner(group, id) {
+  const tabs = document.querySelectorAll(`#page-${group} .inner-tab`);
+  const contents = document.querySelectorAll(`#page-${group} .inner-content`);
+  tabs.forEach(t=>t.classList.remove('active'));
+  contents.forEach(c=>c.classList.remove('active'));
+  document.getElementById(`${group}-${id}`).classList.add('active');
+  event.currentTarget.classList.add('active');
+}
+
+// ============ ASM SIMULATION ============
+let asmState = 0;
+const asmStates = [
+  {name:'S0',label:'IDLE',color:'var(--muted)'},
+  {name:'S1',label:'10฿',color:'var(--accent4)'},
+  {name:'S2',label:'20฿',color:'var(--accent4)'},
+  {name:'S3',label:'30฿',color:'var(--accent4)'},
+  {name:'S4',label:'WASH 🧺',color:'var(--accent)'},
+  {name:'S5',label:'DRY 💨',color:'var(--accent3)'},
+];
+let asmLog = [];
+
+function renderASM() {
+  const el = document.getElementById('asm-states-display');
+  el.innerHTML = asmStates.map((s,i)=>`
+    <div style="text-align:center">
+      <div style="width:90px;height:90px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;border:3px solid ${i===asmState?s.color:'var(--border)'};background:${i===asmState?`rgba(0,0,0,.3)`:'var(--card2)'};transition:.3s;box-shadow:${i===asmState?`0 0 20px ${s.color}44`:''};font-size:0.75rem;font-weight:700">
+        <div style="color:${i===asmState?s.color:'var(--muted)'}">${s.name}</div>
+        <div style="font-size:0.65rem;color:var(--muted)">${s.label}</div>
+      </div>
+    </div>
+  `).join('<div style="color:var(--muted);font-size:1.2rem;align-self:center">→</div>');
+}
+
+function insertCoin() {
+  if(asmState >= 4) return;
+  const log = document.getElementById('asm-log');
+  const status = document.getElementById('asm-status-text');
+  if(asmState < 3) {
+    asmState++;
+    const coins = asmState * 10;
+    asmLog.push(`[${new Date().toLocaleTimeString()}] หยอดเหรียญ → รวม ${coins} บาท`);
+    status.textContent = `💰 รวม ${coins} บาท / 40 บาท`;
+    status.style.color = 'var(--accent4)';
+  }
+  if(asmState === 3) {
+    setTimeout(()=>{
+      asmState = 4;
+      asmLog.push(`[${new Date().toLocaleTimeString()}] ครบ 40 บาท! → เริ่มซัก 🧺`);
+      status.textContent = '🧺 กำลังซัก... (รอ Timer_Done)';
+      status.style.color = 'var(--accent)';
+      renderASM();
+      setTimeout(()=>{
+        asmState = 5;
+        asmLog.push(`[${new Date().toLocaleTimeString()}] Timer_Done! → ปั่นแห้ง 💨`);
+        status.textContent = '💨 กำลังปั่นแห้ง...';
+        status.style.color = 'var(--accent3)';
+        renderASM();
+        setTimeout(()=>{
+          asmState = 0;
+          asmLog.push(`[${new Date().toLocaleTimeString()}] เสร็จสิ้น! → กลับสู่ IDLE ✅`);
+          status.textContent = '✅ เสร็จแล้ว! หยอดเหรียญใหม่ได้';
+          status.style.color = 'var(--accent3)';
+          renderASM();
+          log.innerHTML = asmLog.map(l=>`<div style="color:var(--accent3)">${l}</div>`).join('');
+          log.scrollTop = log.scrollHeight;
+        }, 2000);
+      }, 2000);
+    }, 100);
+  }
+  renderASM();
+  log.innerHTML = asmLog.map(l=>`<div>${l}</div>`).join('');
+  log.scrollTop = log.scrollHeight;
+}
+
+function resetASM() {
+  asmState = 0; asmLog = [];
+  document.getElementById('asm-status-text').textContent = '⏳ รอรับเหรียญ... กด 🪙';
+  document.getElementById('asm-status-text').style.color = 'var(--accent)';
+  document.getElementById('asm-log').innerHTML = '';
+  renderASM();
+}
+
+renderASM();
+
+// ============ INTERACTIVE TRUTH TABLE ============
+let pVal = false, qVal = false;
+
+function toggleVar(v) {
+  if(v==='p') { pVal = !pVal; updateToggle('toggle-p','p-val',pVal); }
+  else { qVal = !qVal; updateToggle('toggle-q','q-val',qVal); }
+  updateTruthCalc();
+}
+
+function updateToggle(id, valId, val) {
+  const el = document.getElementById(id);
+  el.className = 'var-toggle ' + (val?'true-state':'false-state');
+  document.getElementById(valId).textContent = val?'True':'False';
+}
+
+function updateTruthCalc() {
+  const por = pVal || qVal;
+  const notp = !pVal;
+  const andv = por && notp;
+  const final = !andv || qVal;
+  
+  const c = (v) => `<span style="color:${v?'var(--accent3)':'var(--danger)'};font-weight:700">${v?'True':'False'}</span>`;
+  document.getElementById('por-val').innerHTML = c(por);
+  document.getElementById('notp-val').innerHTML = c(notp);
+  document.getElementById('and-val').innerHTML = c(andv);
+  const finalEl = document.getElementById('final-val');
+  finalEl.textContent = final?'True':'False';
+  finalEl.style.color = final?'var(--accent3)':'var(--danger)';
+  
+  const ex = document.getElementById('interactive-explain');
+  ex.innerHTML = `<div class="explain-title">💡 คำอธิบาย</div>
+    p=${pVal}, q=${qVal} → (p∨q)=${por}, ¬p=${notp}, (p∨q)∧¬p=${andv} → ผลลัพธ์=${final}
+    ${final?'<br>✅ True (เพราะ '+(!andv?'เงื่อนไขซ้ายเท็จ':'q เป็นจริง')+')'
+    :'<br>❌ ไม่ควรเกิด (สูตรนี้เป็น Tautology เสมอ!)'}`;
+}
+updateTruthCalc();
+
+// ============ QUIZ ============
+const quizData = [
+  { q:"ข้อใดคือนิยามของ Tautology?", opts:["สูตรที่เป็นจริงทุกกรณี","สูตรที่เป็นเท็จทุกกรณี","สูตรที่เป็นจริงบางกรณี","สูตรที่ไม่มีตัวแปร"], ans:0, exp:"Tautology คือสูตรที่เป็นจริงเสมอ ไม่ว่าจะแทนค่าตัวแปรอย่างไรก็ตาม เช่น p∨¬p" },
+  { q:"p → q สมมูลกับข้อใด?", opts:["p ∧ q","¬p ∨ q","p ∨ ¬q","¬p ∧ q"], ans:1, exp:"กฎ Implication: p→q ≡ ¬p∨q นี่เป็นกฎพื้นฐานที่ต้องจำ" },
+  { q:"De Morgan's Law: ¬(p ∧ q) สมมูลกับ?", opts:["¬p ∧ ¬q","¬p ∨ ¬q","p ∨ q","p ∧ ¬q"], ans:1, exp:"De Morgan: ¬(p∧q) ≡ ¬p∨¬q และ ¬(p∨q) ≡ ¬p∧¬q" },
+  { q:"สูตร [(p∨q)∧¬p]→q เป็นอะไร?", opts:["Contradiction","Contingency","Tautology","สมมูลกับ p∨q"], ans:2, exp:"จากตารางความจริง คอลัมน์สุดท้ายเป็น T ทุกแถว → เป็น Tautology" },
+  { q:"กฎ Modus Tollens คือ?", opts:["p→q, p ∴ q","p→q, ¬q ∴ ¬p","p→q, q ∴ p","¬p→¬q, p ∴ q"], ans:1, exp:"Modus Tollens: ถ้า p→q และ ¬q แล้ว ¬p (ปฏิเสธผลสรุป→ปฏิเสธเหตุ)" },
+  { q:"ใน Python: implies = (not p) or q ใช้คำนวณอะไร?", opts:["p ∧ q","p ∨ q","p → q","p ↔ q"], ans:2, exp:"(not p) or q คือ ¬p∨q ซึ่งสมมูลกับ p→q ตามกฎ Implication" },
+  { q:"ใน ASM Chart เครื่องซักผ้า ต้องหยอดเหรียญกี่ครั้ง?", opts:["2 ครั้ง","3 ครั้ง","4 ครั้ง","5 ครั้ง"], ans:2, exp:"หยอดเหรียญ 10฿ จำนวน 4 ครั้ง = 40฿ ตามที่โจทย์กำหนด" },
+  { q:"¬(p → q) สมมูลกับ?", opts:["¬p → ¬q","p ∧ ¬q","¬p ∧ q","p ∨ ¬q"], ans:1, exp:"ใช้ 3 ขั้น: ¬(p→q) ≡ ¬(¬p∨q) ≡ ¬(¬p)∧¬q ≡ p∧¬q" },
+  { q:"all([True, True, False]) ใน Python ให้ค่าอะไร?", opts:["True","False","Error","None"], ans:1, exp:"all() คืน True เมื่อทุกค่าเป็น True มิฉะนั้นคืน False" },
+  { q:"Double Negation: ¬(¬p) สมมูลกับ?", opts:["¬p","p","p∧¬p","p∨¬p"], ans:1, exp:"กฎ Double Negation: ¬(¬p) ≡ p การปฏิเสธซ้อนกันสองครั้งได้ค่าเดิม" },
+  { q:"is_prime(2) ใน Python ที่เขียนตามโจทย์คืนค่าอะไร?", opts:["False","True","0","Error"], ans:1, exp:"2 ≥ 2 ผ่านเงื่อนไขแรก loop range(2, int(2**0.5)+1) = range(2,2) ไม่วนลูป → คืน True" },
+  { q:"Contrapositive ของ p→q คือ?", opts:["q→p","¬p→¬q","¬q→¬p","p→¬q"], ans:2, exp:"Contrapositive: p→q ≡ ¬q→¬p (สลับและปฏิเสธทั้งคู่) สมมูลกันเสมอ" },
+];
+
+let qIdx = 0, score = 0, answered = false;
+
+function renderQuiz() {
+  if(qIdx >= quizData.length) { showQuizEnd(); return; }
+  const d = quizData[qIdx];
+  answered = false;
+  document.getElementById('quiz-qnum').textContent = `ข้อ ${qIdx+1} / ${quizData.length}`;
+  document.getElementById('quiz-progress').style.width = `${((qIdx)/quizData.length)*100+8}%`;
+  document.getElementById('quiz-q').textContent = d.q;
+  const optsEl = document.getElementById('quiz-opts');
+  optsEl.innerHTML = d.opts.map((o,i)=>`
+    <button class="quiz-option" onclick="answerQuiz(${i})">${String.fromCharCode(65+i)}. ${o}</button>
+  `).join('');
+  document.getElementById('quiz-fb').style.display = 'none';
+  document.getElementById('quiz-next-btn').style.display = 'none';
+}
+
+function answerQuiz(i) {
+  if(answered) return;
+  answered = true;
+  const d = quizData[qIdx];
+  const opts = document.querySelectorAll('.quiz-option');
+  opts.forEach(o => o.setAttribute('disabled',''));
+  opts[d.ans].classList.add('correct');
+  const fb = document.getElementById('quiz-fb');
+  if(i === d.ans) {
+    score++;
+    document.getElementById('quiz-score').textContent = score;
+    fb.className = 'quiz-feedback feedback-correct';
+    fb.innerHTML = `✅ ถูกต้อง! ${d.exp}`;
+  } else {
+    opts[i].classList.add('wrong');
+    fb.className = 'quiz-feedback feedback-wrong';
+    fb.innerHTML = `❌ คำตอบที่ถูกคือ: ${String.fromCharCode(65+d.ans)}. ${d.opts[d.ans]}<br><br>💡 ${d.exp}`;
+  }
+  fb.style.display = 'block';
+  document.getElementById('quiz-next-btn').style.display = 'inline-block';
+}
+
+function nextQuestion() {
+  qIdx++;
+  renderQuiz();
+}
+
+function showQuizEnd() {
+  const pct = Math.round((score/quizData.length)*100);
+  const stars = pct>=80?'⭐⭐⭐':pct>=60?'⭐⭐':'⭐';
+  document.querySelector('#quiz-mc .card').innerHTML = `
+    <div class="score-end">
+      <div class="score-big">${score}/${quizData.length}</div>
+      <div class="stars">${stars}</div>
+      <div style="color:var(--muted);margin-bottom:24px">${pct}% ${pct>=80?'ยอดเยี่ยม!':pct>=60?'ดีมาก!':'ต้องฝึกอีกนิด!'}</div>
+      <button class="btn btn-primary" onclick="restartQuiz()">🔄 ทำใหม่</button>
+    </div>`;
+}
+
+function restartQuiz() {
+  qIdx = 0; score = 0;
+  document.querySelector('#quiz-mc .card').innerHTML = `
+    <div class="quiz-header">
+      <div><div id="quiz-qnum" style="font-size:0.85rem;color:var(--muted)">ข้อ 1 / 12</div></div>
+      <div class="score-display">คะแนน: <span id="quiz-score">0</span></div>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="quiz-progress" style="width:8%"></div></div>
+    <div class="quiz-question" id="quiz-q"></div>
+    <div class="quiz-options" id="quiz-opts"></div>
+    <div class="quiz-feedback" id="quiz-fb"></div>
+    <div style="margin-top:20px;">
+      <button class="btn btn-primary" id="quiz-next-btn" onclick="nextQuestion()" style="display:none">ข้อถัดไป →</button>
+    </div>`;
+  renderQuiz();
+}
+
+renderQuiz();
+
+// WRITE QUESTIONS
+const writeQs = [
+  { q:"ข้อ 1: วาด ASM Chart สำหรับเครื่องซักผ้าหยอดเหรียญ 10฿ (รับ 40฿)", 
+    a:"มี 6 สถานะ: S0(IDLE)→S1(10฿)→S2(20฿)→S3(30฿)→S4(WASH)→S5(DRY)→S0 โดย S4 มี Output: Wash=1 และ S5 มี Output: Dry=1 การเปลี่ยนสถานะใช้ Input: Coin_10 (S0-S3) และ Timer_Done (S4→S5)" },
+  { q:"ข้อ 2: สร้างตารางความจริง [(p∨q)∧¬p]→q แล้วระบุว่าเป็นสัจนิรันดร์หรือไม่", 
+    a:"ตารางมี 4 แถว (TT, TF, FT, FF) คอลัมน์สุดท้ายเป็น T ทุกแถว → เป็นสัจนิรันดร์ (Tautology)" },
+  { q:"ข้อ 3: พิสูจน์ ¬(p→q) ≡ p∧¬q โดยใช้กฎสมมูล", 
+    a:"¬(p→q) ≡ ¬(¬p∨q) [Implication] ≡ ¬(¬p)∧¬q [De Morgan] ≡ p∧¬q [Double Negation] ∴ พิสูจน์ได้" },
+  { q:"ข้อ 4: ตรวจสอบว่าอาร์กิวเมนต์ p→q, ¬q ⊢ ¬p สมเหตุสมผลหรือไม่", 
+    a:"สมเหตุสมผล (Valid) โดยใช้กฎ Modus Tollens: ถ้า p→q จริงและ ¬q จริง แล้ว ¬p ต้องจริง ยืนยันด้วยตารางความจริง: กรณีเดียวที่สมมติฐานทั้งคู่จริง (p=F,q=F) ทำให้สรุป ¬p=T ด้วย" },
+];
+
+document.getElementById('write-questions').innerHTML = writeQs.map((wq,i)=>`
+  <div class="card" style="margin-bottom:16px">
+    <h3 style="margin-bottom:12px;color:var(--accent)">${wq.q}</h3>
+    <div style="margin-bottom:12px">
+      <button class="btn btn-outline" onclick="toggleAns(${i})" style="font-size:0.85rem">👁 ดูเฉลย</button>
+    </div>
+    <div id="write-ans-${i}" class="fix-box" style="display:none">
+      <div class="fix-title">✅ เฉลย</div>
+      ${wq.a}
+    </div>
+  </div>
+`).join('');
+
+function toggleAns(i) {
+  const el = document.getElementById('write-ans-'+i);
+  el.style.display = el.style.display==='none'?'block':'none';
+}
+
+// ============ LOGIC RACE GAME ============
+const raceQs = [
+  {f:"T ∧ T",ans:true},{f:"T ∧ F",ans:false},{f:"F ∨ T",ans:true},{f:"F ∨ F",ans:false},
+  {f:"¬T",ans:false},{f:"¬F",ans:true},{f:"T → F",ans:false},{f:"F → T",ans:true},
+  {f:"T → T",ans:true},{f:"F → F",ans:true},{f:"T ∧ (F ∨ T)",ans:true},{f:"¬(T ∧ F)",ans:true},
+  {f:"¬T ∨ F",ans:false},{f:"(T→F) ∧ T",ans:false},{f:"F ∨ (T ∧ F)",ans:false},
+];
+let raceIdx=0, raceScore=0, raceTimer=null, raceTime=15, raceActive=false;
+
+function startLogicRace() {
+  raceIdx = Math.floor(Math.random()*raceQs.length);
+  raceScore = 0; raceTime = 15; raceActive = true;
+  renderRace();
+  if(raceTimer) clearInterval(raceTimer);
+  raceTimer = setInterval(()=>{
+    raceTime--;
+    const tel = document.getElementById('race-time');
+    if(tel) { tel.textContent = raceTime; tel.style.color = raceTime<=5?'var(--danger)':'var(--accent4)'; }
+    if(raceTime <= 0) { clearInterval(raceTimer); raceActive=false; showRaceEnd(); }
+  }, 1000);
+}
+
+function renderRace() {
+  const q = raceQs[raceIdx % raceQs.length];
+  document.getElementById('logic-race-area').innerHTML = `
+    <div style="text-align:center">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+        <div class="score-display">✅ ${raceScore}</div>
+        <div style="font-size:2rem;font-weight:800;color:var(--accent4)" id="race-time">${raceTime}</div>
+      </div>
+      <div style="font-size:2.5rem;font-weight:800;font-family:'Space Mono',monospace;margin:30px 0;color:var(--text)">${q.f}</div>
+      <div style="display:flex;gap:20px;justify-content:center">
+        <button class="btn" style="background:rgba(16,185,129,.2);border:2px solid var(--accent3);color:var(--accent3);font-size:1.2rem;padding:16px 40px" onclick="raceAnswer(true)">✅ TRUE</button>
+        <button class="btn" style="background:rgba(239,68,68,.1);border:2px solid var(--danger);color:var(--danger);font-size:1.2rem;padding:16px 40px" onclick="raceAnswer(false)">❌ FALSE</button>
+      </div>
+    </div>`;
+}
+
+function raceAnswer(ans) {
+  if(!raceActive) return;
+  const q = raceQs[raceIdx % raceQs.length];
+  if(ans === q.ans) {
+    raceScore++;
+    raceTime = Math.min(raceTime+3, 15);
+  } else {
+    raceTime = Math.max(raceTime-3, 1);
+  }
+  raceIdx = (raceIdx + 1 + Math.floor(Math.random()*5)) % raceQs.length;
+  renderRace();
+}
+
+function showRaceEnd() {
+  document.getElementById('logic-race-area').innerHTML = `
+    <div class="score-end">
+      <div style="font-size:0.9rem;color:var(--muted)">คะแนนสุดท้าย</div>
+      <div class="score-big">${raceScore}</div>
+      <div class="stars">${raceScore>=15?'🏆':raceScore>=8?'⭐⭐⭐':raceScore>=4?'⭐⭐':'⭐'}</div>
+      <div style="color:var(--muted);margin-bottom:24px">${raceScore>=10?'เก่งมาก! ตอบเร็วและแม่น!':raceScore>=5?'ดี! ฝึกอีกนิดจะเก่งขึ้น':'ไม่เป็นไร ลองอีกครั้ง!'}</div>
+      <button class="btn btn-primary" onclick="startLogicRace()">🔄 เล่นอีกครั้ง</button>
+    </div>`;
+}
+
+// ============ MATCH GAME ============
+const matchPairs = [
+  ["p → q","¬p ∨ q"],["¬(p∧q)","¬p ∨ ¬q"],["¬(¬p)","p"],["p→q, ¬q ⊢","¬p"],
+  ["Tautology","จริงทุกกรณี"],["De Morgan","¬(A∧B)≡¬A∨¬B"],
+];
+let matchSelected = null, matchMatched = [], matchAttempts = 0;
+
+function initMatch() {
+  const all = matchPairs.flatMap((p,i)=>[{text:p[0],group:i,side:'L'},{text:p[1],group:i,side:'R'}]);
+  for(let i=all.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[all[i],all[j]]=[all[j],all[i]];}
+  matchSelected=null; matchMatched=[]; matchAttempts=0;
+  const el = document.getElementById('match-game-area');
+  el.innerHTML = `
+    <div style="margin-bottom:12px;color:var(--muted);font-size:0.85rem">เลือก 2 ไพ่ที่สมมูลกัน! ลอง: ${matchAttempts} | ถูก: ${matchMatched.length/2}</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;" id="match-grid">
+      ${all.map((c,i)=>`<button class="quiz-option" id="mc-${i}" onclick="selectMatch(${i},'${c.group}','${c.text}')" 
+        style="font-family:'Space Mono',monospace;font-size:0.85rem">${c.text}</button>`).join('')}
+    </div>
+    <div id="match-msg" style="margin-top:16px;text-align:center;font-size:0.9rem"></div>`;
+}
+
+function selectMatch(i, group, text) {
+  if(matchMatched.includes(String(group))) return;
+  const el = document.getElementById('mc-'+i);
+  if(!matchSelected) {
+    matchSelected = {i,group,text};
+    el.style.borderColor = 'var(--accent)';
+    el.style.background = 'rgba(0,212,255,.15)';
+  } else {
+    matchAttempts++;
+    if(matchSelected.group === group && matchSelected.i !== i) {
+      [matchSelected.i, i].forEach(idx=>{ 
+        const b = document.getElementById('mc-'+idx);
+        b.style.borderColor='var(--accent3)'; b.style.background='rgba(16,185,129,.2)'; b.disabled=true;
+      });
+      matchMatched.push(String(group));
+      document.getElementById('match-msg').innerHTML = '<span style="color:var(--accent3)">✅ ถูก!</span>';
+      if(matchMatched.length === matchPairs.length) {
+        document.getElementById('match-msg').innerHTML = `<br><div style="color:var(--accent3);font-size:1.1rem;font-weight:700">🎉 ถูกหมด! ${matchAttempts} ครั้ง</div><br><button class="btn btn-primary" onclick="initMatch()">เล่นอีก</button>`;
+      }
+    } else {
+      [matchSelected.i, i].forEach(idx=>{ 
+        const b = document.getElementById('mc-'+idx);
+        b.style.borderColor='var(--danger)'; b.style.background='rgba(239,68,68,.1)';
+        setTimeout(()=>{b.style.borderColor='var(--border)';b.style.background='';},800);
+      });
+      document.getElementById('match-msg').innerHTML = '<span style="color:var(--danger)">❌ ไม่ตรงกัน</span>';
+    }
+    matchSelected = null;
+    setTimeout(()=>{ const m=document.getElementById('match-msg'); if(m&&m.textContent.includes('ถูก!')||m.textContent.includes('ตรงกัน')) m.textContent=''; },1000);
+  }
+}
+
+initMatch();
+
+// ============ FORMULA BUILDER ============
+let formula = '';
+function addSymbol(s) { formula += s; document.getElementById('builder-display').textContent = formula || 'คลิกปุ่มด้านล่าง'; }
+function clearFormula() { formula = ''; document.getElementById('builder-display').textContent = 'คลิกปุ่มด้านล่าง'; document.getElementById('builder-result').style.display='none'; }
+
+function evalFormula() {
+  if(!formula.trim()) return;
+  let results = [];
+  for(let p of [true,false]) for(let q of [true,false]) {
+    try {
+      let f = formula
+        .replace(/p/g, String(p)).replace(/q/g, String(q))
+        .replace(/¬/g,'!').replace(/∧/g,'&&').replace(/∨/g,'||').replace(/→/g,'? 1: 0; // ')
+        .replace(/True/g,'true').replace(/False/g,'false');
+      // Simple p→q = !p||q
+      let expr = formula
+        .replace(/p/g, String(p)).replace(/q/g, String(q))
+        .replace(/¬(\w)/g,'(!$1)').replace(/∧/g,'&&').replace(/∨/g,'||');
+      // Handle implies manually
+      if(expr.includes('→')) {
+        expr = expr.replace(/(.+?)→(.+)/,'(!($1)||($2))');
+      }
+      let r = eval(expr.replace(/True/g,'true').replace(/False/g,'false'));
+      results.push(!!r);
+    } catch(e) { results.push(null); }
+  }
+  const valid = results.every(r=>r!==null);
+  const isTaut = valid && results.every(r=>r===true);
+  const isCont = valid && results.every(r=>r===false);
+  const resEl = document.getElementById('builder-result');
+  resEl.style.display = 'block';
+  resEl.innerHTML = `<div class="${isTaut?'fix-box':isCont?'bug-box':'explain'}">
+    <div style="font-weight:700;margin-bottom:8px">📊 ผลการประเมิน: ${formula}</div>
+    <div>ค่าที่ได้: ${results.map(r=>r?'<span class="true-val">T</span>':'<span class="false-val">F</span>').join(' ')}</div>
+    <div style="margin-top:8px;font-weight:700;color:${isTaut?'var(--accent3)':isCont?'var(--danger)':'var(--accent4)'}">
+      ${isTaut?'✅ สัจนิรันดร์ (Tautology)!':isCont?'❌ ขัดแย้ง (Contradiction)':'⚠️ เหตุฉุกเฉิน (Contingency)'}
+    </div>
+  </div>`;
+}
+
+// COPY CODE
+function copyCode(btn) {
+  const code = btn.parentElement.textContent.replace('📋 คัดลอก','').trim();
+  navigator.clipboard.writeText(code).then(()=>{ btn.textContent='✅ คัดลอกแล้ว!'; setTimeout(()=>btn.textContent='📋 คัดลอก',2000); });
+}
+</script>
+</body>
+</html>
